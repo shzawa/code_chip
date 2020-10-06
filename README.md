@@ -7,7 +7,7 @@ JavaScriptによる文字列共有ジェネレータ
 
 ## Usage
 以下にアクセスしてください。
-
+https://codechip.netlify.app/
 
 ## Licence
 GNU GENERAL PUBLIC LICENSE
