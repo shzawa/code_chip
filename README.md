@@ -15,7 +15,7 @@ https://codechip.netlify.app/
 ## Licence
 GNU GENERAL PUBLIC LICENSE
 
-#### Credit
+#### Thanks
 
-基になるコードを書かれた方
-<https://twitter.com/gelehrte_crest>
+https://github.com/dankogai/js-deflate
+https://github.com/gelehrtecrest/surl
