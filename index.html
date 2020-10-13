@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="ja">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta description="汎用文字列圧縮展開ジェネレータです。Code Chip">
   <title>CodeChip</title>
-  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
+  </script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <script src="deflate.js"></script>
   <script src="inflate.js"></script>
+  <script src="qrcode.min.js"></script>
   <link href="style.css" rel="stylesheet">
 </head>
+
 <body>
   <div class="jumbotron">
     <div class="container">
@@ -35,64 +42,74 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC</textarea><br />
       <button class="rawdeflate-sample-deflate">圧縮</button>
       <button id="copy" class="btn btn-primary" onclick="clipboardCopy('shorturl')">クリップボードにコピー</button>
       ↓圧縮された文字列　<br />
-      <textarea readonly class="form-control textarea2" id="shorturl" data-label=".deflate-text" placeholder="短縮URL"></textarea><br />
-      <button class="rawdeflate-sample-inflate">復号</button>
+      <textarea readonly class="form-control textarea2" id="shorturl" data-label=".deflate-text"
+        placeholder="短縮URL"></textarea><br />
+      <div id="qrcode"></div><br />
+
+      <!-- <button class="rawdeflate-sample-inflate">復号</button>
       ↓復号された文字列<br />
-      <textarea class="textarea3" readonly="readonly" rows="10" cols="100"></textarea>
+      <textarea class="textarea3" readonly="readonly" rows="10" cols="100"></textarea> -->
     </div>
   </div>
 
   <script>
-          // 圧縮関数(要deflate.js)
-          function deflate(val) {
-          val = encodeURIComponent(val); // UTF16 → UTF8
-          val = RawDeflate.deflate(val); // 圧縮(deflate.js)
-          val = btoa(val); // base64エンコード
-          return val;
-        }
-        // 復号関数(要inflate.js)
-        function inflate(val) {
-          val = atob(val); // base64デコード
-          val = RawDeflate.inflate(val); // 復元(inflate.js)
-          val = decodeURIComponent(val); // UTF8 → UTF16
-          return val;
-        }
+    // 圧縮関数(要deflate.js)
+    function deflate(val) {
+      val = encodeURIComponent(val) // UTF16 → UTF8
+      val = RawDeflate.deflate(val) // 圧縮(deflate.js)
+      val = btoa(val) // base64エンコード
+      return val
+    }
+    // 復号関数(要inflate.js)
+    function inflate(val) {
+      val = atob(val) // base64デコード
+      val = RawDeflate.inflate(val) // 復元(inflate.js)
+      val = decodeURIComponent(val) // UTF8 → UTF16
+      return val
+    }
 
     $(function () {
-
-        var query = location.search;
-        if(query.slice(1) != ""){
-          $('.textarea3').val(inflate(query.slice(1)));
-        }
-
-        var convert_query = ""
-
-        $('.rawdeflate-sample-deflate').click(function () {
-          convert_query = deflate($('.textarea1').keyup().val());
-          const dir_path = location.href.split("/").reverse().slice(1).reverse().join("/");
-          const input_url = $('.textarea1').val();
-          $(".textarea2").val(`${dir_path}/inflate.html?${deflate(input_url)}`);
-        });
-
-        $('.rawdeflate-sample-inflate').click(function () {
-          const val = inflate(convert_query);
-          $('.textarea3').val(val);
-        });
-
-        $('.textarea1').keyup(function() {
-          const url = location.href;
-          const dir_path = url.split("/").reverse().slice(1).reverse().join("/");
-          const input_url = $('.textarea1').val();
-          $("#shorturl").val(`${dir_path}/inflate.html?${deflate(input_url)}`);
-        });
-      });
-
-      function clipboardCopy(string){
-        var urltext = document.getElementById(string);
-        urltext.select();
-        document.execCommand("copy");
-        alert("コピーしました");
+      let query = location.search
+      if (query.slice(1) != "") {
+        $('.textarea3').val(inflate(query.slice(1)))
       }
-    </script>
-	</body>
+
+      let convert_query = ""
+
+      $('.rawdeflate-sample-deflate').click(function () {
+        // convert_query = deflate($('.textarea1').keyup().val())
+        const dir_path = location.href.split("/").reverse().slice(1).reverse().join("/")
+        const input_url = $('.textarea1').val()
+        const send_url = `${dir_path}/inflate.html?${deflate(input_url)}`
+        $(".textarea2").val(send_url)
+
+        document.getElementById('qrcode').innerText = ''
+        new QRCode(document.getElementById('qrcode'), send_url)
+      })
+
+      // $('.rawdeflate-sample-inflate').click(function () {
+      //   const val = inflate(convert_query)
+      //   $('.textarea3').val(val)
+      // })
+
+      $('.textarea1').keyup(function () {
+        const dir_path = location.href.split("/").reverse().slice(1).reverse().join("/")
+        const input_url = $('.textarea1').val()
+        const send_url = `${dir_path}/inflate.html?${deflate(input_url)}`
+        $("#shorturl").val(send_url)
+
+        document.getElementById('qrcode').innerText = ''
+        new QRCode(document.getElementById('qrcode'), send_url)
+      })
+    })
+
+    function clipboardCopy(string) {
+      var urltext = document.getElementById(string)
+      urltext.select()
+      document.execCommand("copy")
+      alert("コピーしました")
+    }
+  </script>
+</body>
+
 </html>
